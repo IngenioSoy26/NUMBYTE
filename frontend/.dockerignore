@@ -1,0 +1,11 @@
+# Archivos que no deben entrar a la imagen del frontend.
+node_modules/
+dist/
+.git/
+.env
+.env.*
+!.env.example
+Dockerfile
+.dockerignore
+npm-debug.log*
+*.tsbuildinfo

@@ -1,0 +1,25 @@
+# Plantilla de nginx para la SPA de NUMBYTE.
+# El entrypoint de la imagen nginx sustituye solo las variables definidas en el
+# entorno (por eso ${PORT} se reemplaza y $uri permanece intacto).
+server {
+    listen       ${PORT};
+    server_name  _;
+
+    root  /usr/share/nginx/html;
+    index index.html;
+
+    # React Router: cualquier ruta desconocida se resuelve con index.html.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Los assets con hash de Vite se pueden cachear agresivamente.
+    location /assets/ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    gzip on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+}

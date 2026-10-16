@@ -1,0 +1,42 @@
+# Docker Compose para probar las imágenes de producción en local.
+#
+#   docker compose up --build
+#
+# - Backend  -> http://localhost:8000  (documentación en /docs, salud en /salud)
+# - Frontend -> http://localhost:8080
+#
+# Si se cambia el puerto publicado del backend, hay que actualizar también
+# VITE_API_URL del frontend (se "hornea" en el bundle al construir la imagen).
+
+services:
+  backend:
+    build:
+      context: ./backend
+    image: numbyte-backend:local
+    ports:
+      - '8000:8000'
+    environment:
+      # En local se usa SQLite para no depender de un PostgreSQL.
+      APP_AMBIENTE: produccion
+      APP_URL_BD: sqlite:///./numbyte.db
+      CORS_ORIGENES: http://localhost:8080,http://127.0.0.1:8080
+      APP_URL_FRONTEND: http://localhost:8080
+      CORREO_MODO: simulado
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:8000/salud']
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8000/api
+    image: numbyte-frontend:local
+    ports:
+      - '8080:80'
+    environment:
+      PORT: '80'
+    depends_on:
+      - backend

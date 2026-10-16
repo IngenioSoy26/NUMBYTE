@@ -1,0 +1,19 @@
+# Archivos que no deben entrar a la imagen del backend.
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+tests/
+correos_simulados/
+*.db
+*.sqlite3
+.env
+.env.*
+!.env.example
+.git/
+.gitignore
+Dockerfile
+.dockerignore
